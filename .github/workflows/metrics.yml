@@ -1,0 +1,59 @@
+# Name deines Workflows
+name: Metrics
+# Auslöser für den Workflow:
+on:
+  # Zeitgesteuerter Lauf: Täglich um Mitternacht (UTC)
+  schedule:
+    - cron: "0 0 * * *"
+  # Manueller Start über die GitHub-UI
+  workflow_dispatch:
+  # Automatischer Start bei Änderungen am "main"-Branch
+  push:
+    branches:
+      - "main"
+# Definiert die Aufgabe(n)
+jobs:
+  # Name der Aufgabe
+  generate-metrics:
+    # Läuft auf der neuesten Ubuntu-Umgebung
+    runs-on: ubuntu-latest
+    # Erlaubt es dem Workflow, Änderungen an deinem Repository zu schreiben
+    permissions:
+      contents: write
+    # Die einzelnen Schritte der Aufgabe
+    steps:
+      # Der wichtigste Schritt: Verwende das offizielle Metrics-Tool
+      - uses: lowlighter/metrics@latest
+        with:
+          # Verwende das Secret, welches wir in Schritt 2 erstellt haben
+          token: ${{ secrets.METRICS_TOKEN }}
+          
+          # 🛠️ Konfigurationsoptionen (hier beginnt die Anpassung)
+          
+          # Die Ausgabedatei, die später in der README.md eingebunden wird
+          filename: metrics.svg
+          
+          # Die Basis-Metriken, die immer angezeigt werden sollen
+          # (Aktivität, Community, Repositories, etc.)
+          base: header, activity, community, repositories
+          
+          # Zeitzone für die Chart-Darstellung (anpassen!)
+          config_timezone: Europe/Berlin
+          
+          # --- Plugins aktivieren und konfigurieren ---
+          
+          # Beispiel: Zeige die meistgenutzten Programmiersprachen an
+          plugin_languages: yes
+          plugin_languages_ignored: html, css # HTML/CSS ignorieren für bessere Übersicht
+          
+          # Beispiel: Zeige Statistiken zu Code-Änderungen (Lines of Code)
+          plugin_lines: yes
+          
+          # Beispiel: Zeige Follow-up zu Issues und Pull Requests
+          plugin_followup: yes
+          
+          # Weitere coole Plugin-Ideen:
+          # plugin_habits: yes           # Zeigt deine GitHub-Gewohnheiten (Tagesaktivität etc.)
+          # plugin_stargazers: yes       # Zeigt, wer deine Repositories gestarnt hat
+          # plugin_music: yes            # Verknüpfe dein Spotify- oder Last.fm-Konto
+          # plugin_tweets: yes           # Zeige deine neuesten Tweets
