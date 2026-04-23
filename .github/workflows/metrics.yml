@@ -160,18 +160,6 @@ jobs:
           plugin_starlists: yes
           plugin_starlists_limit: 2              # Anzahl der anzuzeigenden Listen.
           
-          # 🏡 2.5 Repositories & Projekte (für das "repository"-Template)
-          # ------------------------------------------------------------
-          # plugin_repositories: Zeige ausgewählte Repositories an.
-          plugin_repositories: yes
-          plugin_repositories_order: featured, pinned, starred, random # Reihenfolge.
-          plugin_repositories_featured: lowlighter/metrics, octocat/Hello-World # Namen.
-          plugin_repositories_skipped: lowlighter/metrics                # Repos, die ignoriert werden.
-          plugin_repositories_pinned:
-            plugin_repositories_pinned_1: "dein-benutzername/dein-repo"
-            plugin_repositories_pinned_2: "dein-benutzername/anderes-repo"
-          plugin_repositories_random: 2                                 # Zufällige Repos.
-          plugin_repositories_starred: 2                                 # Meistgestarnte Repos.
           
           # plugin_stargazers: Zeige, welche anderen Nutzer deine Repos gestarnt haben.
           plugin_stargazers: yes
