@@ -79,7 +79,7 @@ jobs:
           plugin_achievements: yes
           plugin_achievements_threshold: B     # Zeige nur Erfolge ab Schwellenwert (z. B. B, A, S)
           plugin_achievements_secrets: yes     # Zeige auch geheime Erfolge (falls vorhanden)
-          plugin_achievements_display: compact # Verfügbare Werte: compact, detailed, detailed+rank
+          plugin_achievements_display: detailed+rank # Verfügbare Werte: compact, detailed, detailed+rank
           plugin_achievements_limit: 5         # Begrenze die Anzahl angezeigter Erfolge
           
           # plugin_followup: Zeigt, wie gut deine Issues und Pull Requests gepflegt werden.
@@ -88,23 +88,10 @@ jobs:
           plugin_followup_indepth: yes
           
           # plugin_reactions: Zeige die Anzahl an Reactions, die du erhalten hast.
-          plugin_reactions: yes
-          plugin_reactions_details: percentage # Verfügbare Werte: percentage, count
+          # plugin_reactions: yes
+          # plugin_reactions_details: percentage # Verfügbare Werte: percentage, count
           
-          # plugin_notable: Hebe deine wichtigsten Beiträge hervor (z. B. in Top-Repos).
-          plugin_notable: yes
-          plugin_notable_from: all              # Alle Repos (all) oder nur eigene (owner)
-          plugin_notable_types: commit, pull_request, issue # Filtere die Art des Beitrags
-          plugin_notable_self: no               # Eigene Repos ausschließen? (true/false)
-          
-          # plugin_habits: Zeigt deine "Coding Habits" (Aktivität über den Tag, Sprachen etc.)
-          plugin_habits: yes
-          plugin_habits_from: 1000              # Anzahl der Events, die analysiert werden
-          plugin_habits_days: 14                # Über den Zeitraum (Tage)
-          plugin_habits_charts_type: classic    # Verfügbare Werte: classic, chartist
-          plugin_habits_facts: yes              # Zeige "interessante Fakten" an.
-          plugin_habits_trim: yes               # Kürze inaktive Stunden im Chart.
-          
+
           # plugin_introduction: Einführungstext (kann durch ein anderes Plugin ersetzt werden)
           # plugin_introduction: yes
           
@@ -121,18 +108,18 @@ jobs:
           plugin_languages_indepth: false       # Tiefgehende Analyse (clone erlaubt?).
           
           # plugin_lines: Zeilen Code, die du hinzugefügt/entfernt hast.
-          plugin_lines: yes
-          plugin_lines_history_limit: 1         # Historie über x Repositories.
-          plugin_lines_repositories_limit: 4    # Max. Repos, die analysiert werden.
-          plugin_lines_sections: added, removed # Verfügbare Werte: added, removed.
+          # plugin_lines: yes
+          # plugin_lines_history_limit: 1         # Historie über x Repositories.
+          # plugin_lines_repositories_limit: 4    # Max. Repos, die analysiert werden.
+          # plugin_lines_sections: added, removed # Verfügbare Werte: added, removed.
           
           # plugin_isocalendar: Isometrischer Commit-Kalender.
-          plugin_isocalendar: yes
-          plugin_isocalendar_duration: full-year # Verfügbare Werte: full-year, half-year, current-year
+          # plugin_isocalendar: yes
+          # plugin_isocalendar_duration: full-year # Verfügbare Werte: full-year, half-year, current-year
           
           # plugin_calendar: Traditioneller Commit-Kalender.
-          plugin_calendar: yes
-          plugin_calendar_limit: 6               # Anzahl der sichtbaren Monate (0 = alles).
+          # plugin_calendar: yes
+          # plugin_calendar_limit: 6               # Anzahl der sichtbaren Monate (0 = alles).
           
           # 🔗 2.3 Community & Beziehungen
           # ------------------------------------------------------------
@@ -143,28 +130,10 @@ jobs:
           plugin_people_types: followers, following # Verfügbare Werte: followers, following, sponsoring
           
           # plugin_sponsors: Deine GitHub Sponsoren.
-          plugin_sponsors: yes
-          plugin_sponsors_past: yes              # Frühere Sponsoren auch anzeigen.
+          # plugin_sponsors: yes
+          # plugin_sponsors_past: yes              # Frühere Sponsoren auch anzeigen.
           
-          # ✨ 2.4 Stargazer & Beliebtheit
-          # ------------------------------------------------------------
-          # plugin_stars: Zeige kürzlich gestarnte Repositories.
-          plugin_stars: yes
-          plugin_stars_limit: 4                  # Anzahl anzuzeigender Repos.
-          
-          # plugin_topics: Die Themen (Topics), die du am häufigsten genutzt hast.
-          plugin_topics: yes
-          plugin_topics_limit: 15                # Anzahl der anzuzeigenden Topics.
-          
-          # plugin_starlists: Sortiere deine gestarnten Repos in Listen.
-          plugin_starlists: yes
-          plugin_starlists_limit: 2              # Anzahl der anzuzeigenden Listen.
-          
-          
-          # plugin_stargazers: Zeige, welche anderen Nutzer deine Repos gestarnt haben.
-          plugin_stargazers: yes
-          plugin_stargazers_charts_type: classic   # Verfügbare Werte: classic, graph, worldmap
-          
+
           # ~~~ Neue Erweiterung (versuchsweise) ~~~
           # plugin_repository: Dieses Plugin ist für das "repository"-Template spezialisiert.
           # Du kannst es wie folgt nutzen, um ein einzelnes Repo detailliert darzustellen:
@@ -213,7 +182,7 @@ jobs:
           # config_order: "header, activity, community, repositories, languages, habits, followup"
           
           # config_padding: Innenabstand des generierten SVG-Bildes (in Pixeln).
-          # config_padding: 20
+          config_padding: 20
           
           # config_output: Ausgabeformat (SVG, PNG, JPEG, JSON, Markdown).
           # config_output: svg
