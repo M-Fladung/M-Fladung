@@ -1,79 +1,95 @@
-# 📊 Vollständige Metrics-Konfiguration (Version 4.x)
-# Enthält: Achievements, Stargazer (Weltkarte), Lizenzen, PageSpeed, responsive Zentrierung
-# ----------------------------------------------------------------------------------------
-name: "📊 GitHub Metrics - Vollausstattung"
+# Licensed under The Unlicense
+# Feel free to reuse, edit and redistribute this workflow as you wish, no credits needed
+# See https://github.com/lowlighter/metrics for documentation
 
+name: Metrics
 on:
-  schedule:
-    - cron: "0 0 * * *"          # Täglich um Mitternacht
-  workflow_dispatch:              # Manuell startbar
+  schedule: [{cron: "0 16 * * *"}]   # täglich um 16:00 UTC
+  workflow_dispatch:                  # manuell startbar
   push:
-    branches:
-      - "main"
+    branches: [main]
 
 jobs:
   metrics:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write                  # erlaubt das Speichern der SVGs im Repository
     steps:
-      - uses: lowlighter/metrics@latest
+
+      # ------------------- 1. Allgemeine Statistiken (general.svg) -------------------
+      - name: 📊 General stats
+        uses: lowlighter/metrics@latest
         with:
-          # ---------- Basis ----------
           token: ${{ secrets.METRICS_TOKEN }}
-          config_display: columns               # 2 Spalten Desktop, 1 Spalte mobil
-          filename: metrics.svg
-          user: ${{ github.repository_owner }}
+          filename: general.svg
           base: "header, activity, community, repositories, metadata"
+          base_indepth: yes
           config_timezone: Europe/Berlin
           config_padding: 20
           config_octicon: yes
+          # Plugins für diesen Block
+          plugin_isocalendar: yes
+          plugin_languages: yes
+          plugin_languages_ignored: html, css, tex, less, dockerfile, makefile
+          plugin_languages_details: lines, bytes-size, percentage
+          plugin_languages_sections: most-used, recently-used
+          plugin_languages_indepth: yes
+          plugin_languages_limit: 8
+          plugin_topics: yes
+          plugin_topics_limit: 0
+          plugin_topics_mode: icons
+          plugin_notable: yes
+          plugin_discussions: yes
 
-          # ---------- Achievements ----------
+      # ------------------- 2. Achievements (achievements.svg) -------------------
+      - name: 🏆 Achievements & Fortune
+        uses: lowlighter/metrics@latest
+        with:
+          token: ${{ secrets.METRICS_TOKEN }}
+          filename: achievements.svg
+          base: ""                     # kein Basis-Header, nur das Plugin
           plugin_achievements: yes
           plugin_achievements_threshold: B
           plugin_achievements_secrets: yes
           plugin_achievements_display: detailed+rank
-          plugin_achievements_limit: 5
+          plugin_achievements_limit: 6
+          plugin_fortune: yes          # zeigt ein lustiges Zitat oder einen Witz
 
-          # ---------- Followup ----------
-          plugin_followup: yes
-          plugin_followup_indepth: yes
-
-          # ---------- Meistgenutzte Sprachen ----------
-          plugin_languages: yes
-          plugin_languages_limit: 10
-          plugin_languages_threshold: 1
-          plugin_languages_ignored: html, css
-          plugin_languages_details: percentage
-          plugin_languages_sections: most-used
-
-          # ---------- Stargazer (inkl. Weltkarte) ----------
+      # ------------------- 3. Stargazer-Weltkarte, Lizenzen & PageSpeed (advanced.svg) -------------------
+      - name: 🌍 Stargazer map, Licenses & PageSpeed
+        uses: lowlighter/metrics@latest
+        with:
+          token: ${{ secrets.METRICS_TOKEN }}
+          filename: advanced.svg
+          base: ""
+          config_padding: 20
+          # Stargazer mit Weltkarte
           plugin_stargazers: yes
           plugin_stargazers_charts: yes
           plugin_stargazers_charts_type: classic
           plugin_stargazers_worldmap: yes
-          # plugin_stargazers_worldmap_token: ${{ secrets.GOOGLE_MAPS_TOKEN }}  # optional
+          # plugin_stargazers_worldmap_token: ${{ secrets.GOOGLE_MAPS_TOKEN }}   # optional
           plugin_stargazers_worldmap_sample: 500
-
-          # ---------- Repository Lizenzen ----------
-          # ⚠️ Achtung: Erlaubt Kommandoausführung – nur in vertrauenswürdiger Umgebung (GitHub Actions)
+          # Repository Lizenzen (Achtung: erlaubt Kommandoausführung)
           plugin_licenses: yes
           plugin_licenses_setup: bash -c '[[ -f package.json ]] && npm ci || true'
           plugin_licenses_legal: yes
           plugin_licenses_ratio: yes
-
-          # ---------- Google PageSpeed Insights ----------
+          # Google PageSpeed Insights
           plugin_pagespeed: yes
-          # plugin_pagespeed_token: ${{ secrets.PAGESPEED_TOKEN }}   # optional, aber empfohlen
+          # plugin_pagespeed_token: ${{ secrets.PAGESPEED_TOKEN }}               # optional
           plugin_pagespeed_detailed: yes
           plugin_pagespeed_screenshot: no
           plugin_pagespeed_url: .user.website
 
-          # ---------- People (Follower & Following) ----------
+      # ------------------- 4. Follower & Following (people.svg) -------------------
+      - name: 👥 People (followers/following)
+        uses: lowlighter/metrics@latest
+        with:
+          token: ${{ secrets.METRICS_TOKEN }}
+          filename: people.svg
+          base: ""
           plugin_people: yes
           plugin_people_limit: 24
           plugin_people_size: 32
           plugin_people_types: followers, following
-
-          # ---------- Zentrierung des gesamten Dashboards (extras_css) ----------
