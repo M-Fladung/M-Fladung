@@ -77,12 +77,3 @@ jobs:
           plugin_people_types: followers, following
 
           # ---------- Zentrierung des gesamten Dashboards (extras_css) ----------
-          extras_css: |
-            .wrapper {
-              max-width: 1200px !important;
-              margin-left: auto !important;
-              margin-right: auto !important;
-            }
-            .column {
-              min-width: 280px !important;
-            }
