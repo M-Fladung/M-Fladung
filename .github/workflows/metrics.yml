@@ -1,7 +1,4 @@
 # Licensed under The Unlicense
-# Feel free to reuse, edit and redistribute this workflow as you wish, no credits needed
-# See https://github.com/lowlighter/metrics
-
 name: Metrics (multiple SVGs)
 
 on:
@@ -14,7 +11,7 @@ jobs:
   build-metrics:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read                         # Nur Lesen, kein Commit
     steps:
       - name: 📊 General stats
         uses: lowlighter/metrics@latest
@@ -38,8 +35,7 @@ jobs:
           plugin_topics_mode: icons
           plugin_notable: yes
           plugin_discussions: yes
-          output_action: write
-          output_directory: ./metrics-output
+          output_action: none                 # 🔴 Kein Commit, nur lokale Datei
 
       - name: 🏆 Achievements
         uses: lowlighter/metrics@latest
@@ -52,8 +48,7 @@ jobs:
           plugin_achievements_secrets: yes
           plugin_achievements_display: detailed
           plugin_achievements_limit: 6
-          output_action: write
-          output_directory: ./metrics-output
+          output_action: none
 
       - name: 🔍 Issues & PRs
         uses: lowlighter/metrics@latest
@@ -63,8 +58,7 @@ jobs:
           base: ""
           plugin_followup: yes
           plugin_followup_indepth: yes
-          output_action: write
-          output_directory: ./metrics-output
+          output_action: none
 
       - name: ⚖️ Licenses
         uses: lowlighter/metrics@latest
@@ -76,8 +70,7 @@ jobs:
           plugin_licenses_setup: bash -c '[[ -f package.json ]] && npm ci || true'
           plugin_licenses_legal: yes
           plugin_licenses_ratio: yes
-          output_action: write
-          output_directory: ./metrics-output
+          output_action: none
 
       - name: 🚀 PageSpeed
         uses: lowlighter/metrics@latest
@@ -89,8 +82,7 @@ jobs:
           plugin_pagespeed_detailed: yes
           plugin_pagespeed_screenshot: no
           plugin_pagespeed_url: .user.website
-          output_action: write
-          output_directory: ./metrics-output
+          output_action: none
 
       - name: 🌍 Stargazer worldmap
         uses: lowlighter/metrics@latest
@@ -103,8 +95,7 @@ jobs:
           plugin_stargazers_charts_type: classic
           plugin_stargazers_worldmap: yes
           plugin_stargazers_worldmap_sample: 500
-          output_action: write
-          output_directory: ./metrics-output
+          output_action: none
 
       - name: 👥 People
         uses: lowlighter/metrics@latest
@@ -116,12 +107,18 @@ jobs:
           plugin_people_limit: 24
           plugin_people_size: 32
           plugin_people_types: followers, following
-          output_action: write
-          output_directory: ./metrics-output
+          output_action: none
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: metrics-svgs
-          path: ./metrics-output
+          path: |
+            general.svg
+            achievements.svg
+            issues.svg
+            licenses.svg
+            pagespeed.svg
+            stargazer.svg
+            people.svg
           if-no-files-found: error
