@@ -1,117 +1,88 @@
-# ✨ Vollständige Metrics-Konfiguration (Version 4.x, kompatibel mit lowlighter/metrics@latest)
+# 📊 Vollständige Metrics-Konfiguration (Version 4.x)
+# Enthält: Achievements, Stargazer (Weltkarte), Lizenzen, PageSpeed, responsive Zentrierung
 # ----------------------------------------------------------------------------------------
-# Nutzung:
-#   - Entferne einfach alles, was du nicht brauchst.
-#   - Setze Parameter auf "true", "false" oder den gewünschten Wert.
-#   - Bei Unsicherheiten helfen die Links im entsprechenden Abschnitt.
-#   - Ein "|" am Ende einer Zeile erlaubt mehrzeilige Werte (wird oft für CSS gebraucht).
-#   - Füge deine Tokens als Secrets in deinem Repository hinzu (Settings -> Secrets and variables -> Actions)
+name: "📊 GitHub Metrics - Vollausstattung"
 
-# 📦 Workflow-Name (optional, für die Übersicht in GitHub Actions)
-name: "📊 Vollständige GitHub Metrics"
-
-# ⏱️ Auslöser (triggers)
 on:
-  # Täglicher Lauf um Mitternacht (UTC)
   schedule:
-    - cron: "0 0 * * *"
-  # Manueller Start über den GitHub Actions-Tab
-  workflow_dispatch:
-  # Automatischer Lauf bei jedem Push in den Haupt-Branch (hier "main")
+    - cron: "0 0 * * *"          # Täglich um Mitternacht
+  workflow_dispatch:              # Manuell startbar
   push:
     branches:
       - "main"
 
-# 🏗️ Definiert die Jobs, die in dieser Aktion laufen
 jobs:
   metrics:
-    # Läuft auf der neuesten Ubuntu-Umgebung
     runs-on: ubuntu-latest
-    
-    # Erlaubt der Aktion, Änderungen zu committen (z.B. generierte SVG-Dateien)
     permissions:
       contents: write
-      
     steps:
-      # 👇 Zentraler Schritt: Das Metrics-Tool von lowlighter ausführen
       - uses: lowlighter/metrics@latest
         with:
-          # --- 1. Allgemeine Einstellungen (Core / Base) ---
+          # ---------- Basis ----------
           token: ${{ secrets.METRICS_TOKEN }}
-          config_display: columns  # Responsives Layout: 2 Spalten auf Desktop, 1 auf Mobile
-          
+          config_display: columns               # 2 Spalten Desktop, 1 Spalte mobil
           filename: metrics.svg
           user: ${{ github.repository_owner }}
-          
-          # Basis-Inhalte (header, activity, community, repositories, metadata)
           base: "header, activity, community, repositories, metadata"
-
-          # Zeitzone (wichtig für Commit-Kalender etc.)
           config_timezone: Europe/Berlin
-          
-          # --- 2. Plugins (hier kannst du alle erdenklichen Statistiken aktivieren) ---
-          
-          # 🏆 2.1 GitHub-Aktivität & Erfolge
-          # ------------------------------------------------------------
-          # plugin_achievements: GitHub-Erfolge anzeigen
+          config_padding: 20
+          config_octicon: yes
+
+          # ---------- Achievements ----------
           plugin_achievements: yes
-          plugin_achievements_threshold: B     # Zeige nur Erfolge ab Schwellenwert (B, A, S)
-          plugin_achievements_secrets: yes     # Zeige auch geheime Erfolge (falls vorhanden)
-          plugin_achievements_display: detailed+rank # Verfügbar: compact, detailed, detailed+rank
-          plugin_achievements_limit: 5         # Begrenze die Anzahl angezeigter Erfolge
-          
-          # plugin_followup: Zeigt, wie gut deine Issues und Pull Requests gepflegt werden.
+          plugin_achievements_threshold: B
+          plugin_achievements_secrets: yes
+          plugin_achievements_display: detailed+rank
+          plugin_achievements_limit: 5
+
+          # ---------- Followup ----------
           plugin_followup: yes
-          plugin_followup_indepth: yes         # Detaillierte Aufschlüsselung
-          
-          # 📊 2.2 Code-Statistiken
-          # ------------------------------------------------------------
-          # plugin_languages: Deine meistgenutzten Sprachen.
+          plugin_followup_indepth: yes
+
+          # ---------- Meistgenutzte Sprachen ----------
           plugin_languages: yes
           plugin_languages_limit: 10
           plugin_languages_threshold: 1
           plugin_languages_ignored: html, css
           plugin_languages_details: percentage
           plugin_languages_sections: most-used
-          
-          # ❤️ 2.3 Stargazer & Weltkarte (neu)
-          # ------------------------------------------------------------
-          # plugin_stargazers: Zeigt die Entwicklung deiner Stargazer über Zeit und eine Weltkarte
+
+          # ---------- Stargazer (inkl. Weltkarte) ----------
           plugin_stargazers: yes
-          plugin_stargazers_charts: yes               # Zeige klassisches Liniendiagramm
-          plugin_stargazers_charts_type: classic      # Verfügbar: classic, chartist
-          plugin_stargazers_worldmap: yes             # Aktiviere die Weltkarte der Stargazer
-          # plugin_stargazers_worldmap_token: ${{ secrets.GOOGLE_MAPS_TOKEN }}  # Optional, empfohlen bei vielen Stars
-          plugin_stargazers_worldmap_sample: 500      # Begrenze Stichprobe, um API-Limits zu vermeiden
-          
-          # 🔗 2.4 Community & Beziehungen
-          # ------------------------------------------------------------
-          # plugin_people: Zeige Follower, Followings und Sponsoren.
+          plugin_stargazers_charts: yes
+          plugin_stargazers_charts_type: classic
+          plugin_stargazers_worldmap: yes
+          # plugin_stargazers_worldmap_token: ${{ secrets.GOOGLE_MAPS_TOKEN }}  # optional
+          plugin_stargazers_worldmap_sample: 500
+
+          # ---------- Repository Lizenzen ----------
+          # ⚠️ Achtung: Erlaubt Kommandoausführung – nur in vertrauenswürdiger Umgebung (GitHub Actions)
+          plugin_licenses: yes
+          plugin_licenses_setup: bash -c '[[ -f package.json ]] && npm ci || true'
+          plugin_licenses_legal: yes
+          plugin_licenses_ratio: yes
+
+          # ---------- Google PageSpeed Insights ----------
+          plugin_pagespeed: yes
+          # plugin_pagespeed_token: ${{ secrets.PAGESPEED_TOKEN }}   # optional, aber empfohlen
+          plugin_pagespeed_detailed: yes
+          plugin_pagespeed_screenshot: no
+          plugin_pagespeed_url: .user.website
+
+          # ---------- People (Follower & Following) ----------
           plugin_people: yes
           plugin_people_limit: 24
           plugin_people_size: 32
           plugin_people_types: followers, following
-          
-          # ⚖️ 2.5 Repository Lizenzen (neu)
-          # ------------------------------------------------------------
-          # ACHTUNG: Dieses Plugin erlaubt Kommando-Injektion!
-          # ⚠️ Nicht auf öffentlichen Web-Instanzen verwenden.
-          plugin_licenses: yes
-          plugin_licenses_setup: bash -c '[[ -f package.json ]] && npm ci || true'  # Setup für Node.js
-          plugin_licenses_legal: yes         # Zeige Erlaubnisse, Einschränkungen und Bedingungen
-          plugin_licenses_ratio: yes         # Zeige Open-Source-Ratio der Dependencies
-          
-          # 🚀 2.6 PageSpeed Insights (neu)
-          # ------------------------------------------------------------
-          # plugin_pagespeed: Website-Performance via Google PageSpeed API
-          plugin_pagespeed: yes
-          # plugin_pagespeed_token: ${{ secrets.PAGESPEED_TOKEN }}    # Optional, um Rate Limits zu umgehen
-          plugin_pagespeed_detailed: yes     # Zeige detaillierte Audit-Metriken
-          plugin_pagespeed_screenshot: no    # Screenshot der Website (deaktiviert, um API-Last zu reduzieren)
-          plugin_pagespeed_url: .user.website # Standard: .user.website (URL aus GitHub-Profil)
-          
-          # --- 3. Erweiterte Konfiguration & Styling ---
-          # ------------------------------------------------------------
-          config_padding: 20
-          config_octicon: yes
-          
+
+          # ---------- Zentrierung des gesamten Dashboards (extras_css) ----------
+          extras_css: |
+            .wrapper {
+              max-width: 1200px !important;
+              margin-left: auto !important;
+              margin-right: auto !important;
+            }
+            .column {
+              min-width: 280px !important;
+            }
