@@ -21,7 +21,7 @@ jobs:
         with:
           # ---------- Basis ----------
           token: ${{ secrets.METRICS_TOKEN }}
-          config_display: columns               # 2 Spalten Desktop, 1 Spalte mobil
+          #config_display: columns               # 2 Spalten Desktop, 1 Spalte mobil
           filename: metrics.svg
           user: ${{ github.repository_owner }}
           base: "header, activity, community, repositories, metadata"
