@@ -5,6 +5,7 @@
 #   - Setze Parameter auf "true", "false" oder den gewünschten Wert.
 #   - Bei Unsicherheiten helfen die Links im entsprechenden Abschnitt.
 #   - Ein "|" am Ende einer Zeile erlaubt mehrzeilige Werte (wird oft für CSS gebraucht).
+#   - Füge deine Tokens als Secrets in deinem Repository hinzu (Settings -> Secrets and variables -> Actions)
 
 # 📦 Workflow-Name (optional, für die Übersicht in GitHub Actions)
 name: "📊 Vollständige GitHub Metrics"
@@ -33,172 +34,84 @@ jobs:
       
     steps:
       # 👇 Zentraler Schritt: Das Metrics-Tool von lowlighter ausführen
-      # Die vollständige Liste findest du hier: https://github.com/lowlighter/metrics#-plugins
       - uses: lowlighter/metrics@latest
         with:
           # --- 1. Allgemeine Einstellungen (Core / Base) ---
-          # Dokumentation: https://github.com/lowlighter/metrics/tree/master/source/plugins/core
-          
-          # Dein persönlicher Zugriffstoken (PAT) – wird als GitHub-Action-Secret gespeichert.
-          # Weitere Infos: https://github.com/lowlighter/metrics#-token
           token: ${{ secrets.METRICS_TOKEN }}
+          config_display: columns  # Responsives Layout: 2 Spalten auf Desktop, 1 auf Mobile
           
-          # Name der generierten Ausgabedatei (SVG, PNG, JPEG, JSON oder Markdown)
           filename: metrics.svg
-          
-          # GitHub-Benutzername, für den die Statistiken generiert werden sollen.
-          # Standard: Der Besitzer des Tokens. 
-          # Du kannst hier auch deine Org angeben.
           user: ${{ github.repository_owner }}
           
-          # Basis-Inhalte, die immer angezeigt werden sollen.
-          # Optionen: header, activity, community, repositories, metadata
-          # Setze auf "" (leer), um alles zu deaktivieren.
+          # Basis-Inhalte (header, activity, community, repositories, metadata)
           base: "header, activity, community, repositories, metadata"
 
-          # --- Optionale Einstellungen für das Base-Plugin ---
-          # Dokumentation: https://github.com/lowlighter/metrics/tree/master/source/plugins/base
-          
-          # repositories: Wie viele Repositories in der Basis-Ansicht gezeigt werden?
-          # repositories: 100
-          # repositories_forks: Erhalte auch geforkte Repos? (true/false)
-          # repositories_forks: false
-          # repositories_affiliations: Zeige Repos, bei denen du Owner, Collaborator oder Member bist.
-          # repositories_affiliations: owner, collaborator
-          
           # Zeitzone (wichtig für Commit-Kalender etc.)
           config_timezone: Europe/Berlin
           
-          # --- 2. Plugins: Hier kannst du alle erdenklichen Statistiken aktivieren ---
-          # Die vollständige Liste mit Erklärungen findest du hier:
-          # https://github.com/lowlighter/metrics#-plugins
+          # --- 2. Plugins (hier kannst du alle erdenklichen Statistiken aktivieren) ---
           
           # 🏆 2.1 GitHub-Aktivität & Erfolge
           # ------------------------------------------------------------
           # plugin_achievements: GitHub-Erfolge anzeigen
           plugin_achievements: yes
-          plugin_achievements_threshold: B     # Zeige nur Erfolge ab Schwellenwert (z. B. B, A, S)
+          plugin_achievements_threshold: B     # Zeige nur Erfolge ab Schwellenwert (B, A, S)
           plugin_achievements_secrets: yes     # Zeige auch geheime Erfolge (falls vorhanden)
-          plugin_achievements_display: detailed+rank # Verfügbare Werte: compact, detailed, detailed+rank
+          plugin_achievements_display: detailed+rank # Verfügbar: compact, detailed, detailed+rank
           plugin_achievements_limit: 5         # Begrenze die Anzahl angezeigter Erfolge
           
           # plugin_followup: Zeigt, wie gut deine Issues und Pull Requests gepflegt werden.
           plugin_followup: yes
-          # plugin_followup_indepth: Detaillierte Aufschlüsselung nach Maintainer/Usern.
-          plugin_followup_indepth: yes
-          
-          # plugin_reactions: Zeige die Anzahl an Reactions, die du erhalten hast.
-          # plugin_reactions: yes
-          # plugin_reactions_details: percentage # Verfügbare Werte: percentage, count
-          
-
-          # plugin_introduction: Einführungstext (kann durch ein anderes Plugin ersetzt werden)
-          # plugin_introduction: yes
+          plugin_followup_indepth: yes         # Detaillierte Aufschlüsselung
           
           # 📊 2.2 Code-Statistiken
           # ------------------------------------------------------------
           # plugin_languages: Deine meistgenutzten Sprachen.
           plugin_languages: yes
-          plugin_languages_limit: 10            # Wie viele Sprachen anzeigen?
-          plugin_languages_threshold: 1         # Minimum in Prozent, um angezeigt zu werden.
-          plugin_languages_ignored: html, css   # Ignorierte Sprachen (optional).
-          plugin_languages_details: percentage  # Verfügbare Werte: percentage, bytes-size
-          plugin_languages_skipped: lowlighter/metrics # Repos, die ignoriert werden sollen.
-          plugin_languages_sections: most-used  # Verfügbare Werte: most-used, recently-used.
-          plugin_languages_indepth: false       # Tiefgehende Analyse (clone erlaubt?).
+          plugin_languages_limit: 10
+          plugin_languages_threshold: 1
+          plugin_languages_ignored: html, css
+          plugin_languages_details: percentage
+          plugin_languages_sections: most-used
           
-          # plugin_lines: Zeilen Code, die du hinzugefügt/entfernt hast.
-          # plugin_lines: yes
-          # plugin_lines_history_limit: 1         # Historie über x Repositories.
-          # plugin_lines_repositories_limit: 4    # Max. Repos, die analysiert werden.
-          # plugin_lines_sections: added, removed # Verfügbare Werte: added, removed.
+          # ❤️ 2.3 Stargazer & Weltkarte (neu)
+          # ------------------------------------------------------------
+          # plugin_stargazers: Zeigt die Entwicklung deiner Stargazer über Zeit und eine Weltkarte
+          plugin_stargazers: yes
+          plugin_stargazers_charts: yes               # Zeige klassisches Liniendiagramm
+          plugin_stargazers_charts_type: classic      # Verfügbar: classic, chartist
+          plugin_stargazers_worldmap: yes             # Aktiviere die Weltkarte der Stargazer
+          # plugin_stargazers_worldmap_token: ${{ secrets.GOOGLE_MAPS_TOKEN }}  # Optional, empfohlen bei vielen Stars
+          plugin_stargazers_worldmap_sample: 500      # Begrenze Stichprobe, um API-Limits zu vermeiden
           
-          # plugin_isocalendar: Isometrischer Commit-Kalender.
-          # plugin_isocalendar: yes
-          # plugin_isocalendar_duration: full-year # Verfügbare Werte: full-year, half-year, current-year
-          
-          # plugin_calendar: Traditioneller Commit-Kalender.
-          # plugin_calendar: yes
-          # plugin_calendar_limit: 6               # Anzahl der sichtbaren Monate (0 = alles).
-          
-          # 🔗 2.3 Community & Beziehungen
+          # 🔗 2.4 Community & Beziehungen
           # ------------------------------------------------------------
           # plugin_people: Zeige Follower, Followings und Sponsoren.
           plugin_people: yes
-          plugin_people_limit: 24                # Anzahl der anzuzeigenden Personen.
-          plugin_people_size: 32                 # Avatar-Größe in Pixeln.
-          plugin_people_types: followers, following # Verfügbare Werte: followers, following, sponsoring
+          plugin_people_limit: 24
+          plugin_people_size: 32
+          plugin_people_types: followers, following
           
-          # plugin_sponsors: Deine GitHub Sponsoren.
-          # plugin_sponsors: yes
-          # plugin_sponsors_past: yes              # Frühere Sponsoren auch anzeigen.
-          
-
-          # ~~~ Neue Erweiterung (versuchsweise) ~~~
-          # plugin_repository: Dieses Plugin ist für das "repository"-Template spezialisiert.
-          # Du kannst es wie folgt nutzen, um ein einzelnes Repo detailliert darzustellen:
-          # plugin_repository: yes
-          # repo: dein-org/dein-repo
-          
-          # 🎨 2.6 Sonstige & Drittanbieter-Plugins (Community)
+          # ⚖️ 2.5 Repository Lizenzen (neu)
           # ------------------------------------------------------------
-          # Diese Plugins erfordern teilweise zusätzliche Schlüssel oder Tokens.
+          # ACHTUNG: Dieses Plugin erlaubt Kommando-Injektion!
+          # ⚠️ Nicht auf öffentlichen Web-Instanzen verwenden.
+          plugin_licenses: yes
+          plugin_licenses_setup: bash -c '[[ -f package.json ]] && npm ci || true'  # Setup für Node.js
+          plugin_licenses_legal: yes         # Zeige Erlaubnisse, Einschränkungen und Bedingungen
+          plugin_licenses_ratio: yes         # Zeige Open-Source-Ratio der Dependencies
           
-          # plugin_music: Verknüpfung mit Spotify oder Last.fm.
-          # plugin_music: yes
-          # plugin_music_token: ${{ secrets.SPOTIFY_TOKEN }}  # Benötigt ein Token.
-          # plugin_music_limit: 4                 # Anzahl der anzuzeigenden Tracks.
-          # plugin_music_mode: recent             # Verfügbare Werte: recent, top, playlist
-          
-          # plugin_wakatime: Statistiken von WakaTime (Programmierzeit).
-          # plugin_wakatime: yes
-          # plugin_wakatime_token: ${{ secrets.WAKATIME_TOKEN }}
-          # plugin_wakatime_limit: 5
-          # plugin_wakatime_sections: time, languages, projects, editors, os
-          
-          # plugin_rss: Integriere einen RSS-Feed (z. B. deinen Blog).
-          # plugin_rss: yes
-          # plugin_rss_source: https://deinblog.de/feed.xml
-          # plugin_rss_limit: 4
-          
-          # plugin_screenshot: Mache einen Screenshot einer Webseite.
-          # plugin_screenshot: yes
-          # plugin_screenshot_url: https://github.com
-          # plugin_screenshot_selector: ".repository-content"
-          
-          # plugin_steam: Zeige deine kürzlich gespielten Steam-Spiele.
-          # plugin_steam: yes
-          # plugin_steam_id: deine-steam-id     # Benötigt eine öffentliche Steam-ID.
-          # plugin_steam_limit: 4
-          
-          # plugin_posts: Zeige deine neuesten Dev.to-, Medium- oder Hashnode-Posts.
-          # plugin_posts: yes
-          # plugin_posts_source: dev.to        # Verfügbare Werte: dev.to, medium, hashnode
-          # plugin_posts_limit: 4
+          # 🚀 2.6 PageSpeed Insights (neu)
+          # ------------------------------------------------------------
+          # plugin_pagespeed: Website-Performance via Google PageSpeed API
+          plugin_pagespeed: yes
+          # plugin_pagespeed_token: ${{ secrets.PAGESPEED_TOKEN }}    # Optional, um Rate Limits zu umgehen
+          plugin_pagespeed_detailed: yes     # Zeige detaillierte Audit-Metriken
+          plugin_pagespeed_screenshot: no    # Screenshot der Website (deaktiviert, um API-Last zu reduzieren)
+          plugin_pagespeed_url: .user.website # Standard: .user.website (URL aus GitHub-Profil)
           
           # --- 3. Erweiterte Konfiguration & Styling ---
           # ------------------------------------------------------------
-          # config_order: Definiere die Reihenfolge der Base- und Plugin-Abschnitte.
-          # config_order: "header, activity, community, repositories, languages, habits, followup"
-          
-          # config_padding: Innenabstand des generierten SVG-Bildes (in Pixeln).
           config_padding: 20
-          
-          # config_output: Ausgabeformat (SVG, PNG, JPEG, JSON, Markdown).
-          # config_output: svg
-          
-          # config_retries: Anzahl der Wiederholungsversuche bei fehlgeschlagenen API-Requests.
-          # config_retries: 3
-          
-          # config_octicon: Verwende GitHub-Octicons für eine einheitliche Icon-Sprache.
           config_octicon: yes
           
-          # extras_css: Eigenes CSS für tiefergehende optische Anpassungen.
-          # extras_css: |
-          #   .field-name {
-          #     font-weight: bold;
-          #   }
-          
-          # extras_js: eigenes JavaScript, um die SVG-Daten zu manipulieren.
-          # extras_js: |
-          #   console.log("Hello from custom JS!");
