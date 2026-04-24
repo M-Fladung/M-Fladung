@@ -23,6 +23,7 @@ jobs:
           token: ${{ secrets.METRICS_TOKEN }}
           filename: general.svg
           base: "header, activity, community, repositories, metadata"
+          output_action: gist 
           base_indepth: yes
           config_timezone: Europe/Berlin
           config_padding: 20
