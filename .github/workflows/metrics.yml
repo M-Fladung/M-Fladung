@@ -1,29 +1,28 @@
 # Licensed under The Unlicense
 # Feel free to reuse, edit and redistribute this workflow as you wish, no credits needed
-# See https://github.com/lowlighter/metrics for documentation
+# See https://github.com/lowlighter/metrics
 
-name: Metrics
+name: Metrics (multiple SVGs)
+
 on:
-  schedule: [{cron: "0 16 * * *"}]   # täglich um 16:00 UTC
-  workflow_dispatch:                  # manuell startbar
+  schedule: [{cron: "0 16 * * *"}]
+  workflow_dispatch:
   push:
     branches: [main]
 
 jobs:
-  metrics:
+  build-metrics:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read   # Nur lesen, kein Commit
     steps:
-
-      # ------------------- 1. Allgemeine Statistiken (general.svg) -------------------
+      # 1️⃣ Allgemeine Statistiken (general.svg)
       - name: 📊 General stats
         uses: lowlighter/metrics@latest
         with:
           token: ${{ secrets.METRICS_TOKEN }}
           filename: general.svg
           base: "header, activity, community, repositories, metadata"
-          output_action: gist 
           base_indepth: yes
           config_timezone: Europe/Berlin
           config_padding: 20
@@ -40,8 +39,10 @@ jobs:
           plugin_topics_mode: icons
           plugin_notable: yes
           plugin_discussions: yes
+          # Kein Commit – nur lokale Datei
+          output_action: none
 
-      # ------------------- 2. Achievements (achievements.svg) -------------------
+      # 2️⃣ Achievements (achievements.svg)
       - name: 🏆 Achievements
         uses: lowlighter/metrics@latest
         with:
@@ -51,11 +52,12 @@ jobs:
           plugin_achievements: yes
           plugin_achievements_threshold: B
           plugin_achievements_secrets: yes
-          plugin_achievements_display: detailed   # oder "compact"
+          plugin_achievements_display: detailed
           plugin_achievements_limit: 6
+          output_action: none
 
-      # ------------------- 3. Indepth Issues & PR Analysis (issues.svg) -------------------
-      - name: 🔍 Indepth issues analysis
+      # 3️⃣ Indepth Issues & PR analysis (issues.svg)
+      - name: 🔍 Issues & PRs
         uses: lowlighter/metrics@latest
         with:
           token: ${{ secrets.METRICS_TOKEN }}
@@ -63,57 +65,73 @@ jobs:
           base: ""
           plugin_followup: yes
           plugin_followup_indepth: yes
-          # optional: plugin_followup_sections (z.B. "repositories, user")
+          output_action: none
 
-      # ------------------- 4. Repository Licenses (Permissions, Limitations, Conditions) -------------------
-      - name: ⚖️ Repository licenses (legal)
+      # 4️⃣ Repository licenses (licenses.svg)
+      - name: ⚖️ Licenses
         uses: lowlighter/metrics@latest
         with:
           token: ${{ secrets.METRICS_TOKEN }}
           filename: licenses.svg
           base: ""
-          config_padding: 20
           plugin_licenses: yes
           plugin_licenses_setup: bash -c '[[ -f package.json ]] && npm ci || true'
-          plugin_licenses_legal: yes             # zeigt Permissions, Limitations, Conditions
-          plugin_licenses_ratio: yes             # zeigt Open‑Source‑Anteil der Dependencies
+          plugin_licenses_legal: yes
+          plugin_licenses_ratio: yes
+          output_action: none
 
-      # ------------------- 5. Google PageSpeed (pagespeed.svg) -------------------
-      - name: 🚀 Google PageSpeed Insights
+      # 5️⃣ Google PageSpeed (pagespeed.svg)
+      - name: 🚀 PageSpeed Insights
         uses: lowlighter/metrics@latest
         with:
           token: ${{ secrets.METRICS_TOKEN }}
           filename: pagespeed.svg
           base: ""
           plugin_pagespeed: yes
-          # plugin_pagespeed_token: ${{ secrets.PAGESPEED_TOKEN }}
           plugin_pagespeed_detailed: yes
           plugin_pagespeed_screenshot: no
           plugin_pagespeed_url: .user.website
+          output_action: none
 
-      # ------------------- 6. (Optional) Stargazer Worldmap (stargazer.svg) -------------------
-      # Aktivieren durch Entfernen der Kommentare – benötigt ggf. GOOGLE_MAPS_TOKEN
-      # - name: 🌍 Stargazer worldmap
-      #   uses: lowlighter/metrics@latest
-      #   with:
-      #     token: ${{ secrets.METRICS_TOKEN }}
-      #     filename: stargazer.svg
-      #     base: ""
-      #     plugin_stargazers: yes
-      #     plugin_stargazers_charts: yes
-      #     plugin_stargazers_charts_type: classic
-      #     plugin_stargazers_worldmap: yes
-      #     plugin_stargazers_worldmap_sample: 500
-      #     # plugin_stargazers_worldmap_token: ${{ secrets.GOOGLE_MAPS_TOKEN }}
+      # 6️⃣ Stargazer & Weltkarte (stargazer.svg)
+      - name: 🌍 Stargazer worldmap
+        uses: lowlighter/metrics@latest
+        with:
+          token: ${{ secrets.METRICS_TOKEN }}
+          filename: stargazer.svg
+          base: ""
+          plugin_stargazers: yes
+          plugin_stargazers_charts: yes
+          plugin_stargazers_charts_type: classic
+          plugin_stargazers_worldmap: yes
+          # plugin_stargazers_worldmap_token: ${{ secrets.GOOGLE_MAPS_TOKEN }}
+          plugin_stargazers_worldmap_sample: 500
+          output_action: none
 
-      # ------------------- 7. (Optional) People (people.svg) -------------------
-      # - name: 👥 Followers & following
-      #   uses: lowlighter/metrics@latest
-      #   with:
-      #     token: ${{ secrets.METRICS_TOKEN }}
-      #     filename: people.svg
-      #     base: ""
-      #     plugin_people: yes
-      #     plugin_people_limit: 24
-      #     plugin_people_size: 32
-      #     plugin_people_types: followers, following
+      # 7️⃣ Follower & Following (people.svg)
+      - name: 👥 People
+        uses: lowlighter/metrics@latest
+        with:
+          token: ${{ secrets.METRICS_TOKEN }}
+          filename: people.svg
+          base: ""
+          plugin_people: yes
+          plugin_people_limit: 24
+          plugin_people_size: 32
+          plugin_people_types: followers, following
+          output_action: none
+
+      # 📦 Alle generierten SVGs als Artefakt hochladen
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: metrics-svgs
+          path: |
+            general.svg
+            achievements.svg
+            issues.svg
+            licenses.svg
+            pagespeed.svg
+            stargazer.svg
+            people.svg
+          if-no-files-found: error
