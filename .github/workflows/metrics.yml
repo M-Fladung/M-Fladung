@@ -32,7 +32,7 @@ jobs:
           #plugin_topics_mode: icons
           #plugin_notable: yes
           #plugin_discussions: yes
-          #output_action: none
+          output_action: none
       - uses: actions/upload-artifact@v4
         with:
           name: general-svg
