@@ -18,7 +18,16 @@ jobs:
           base: "header, activity"
           base_indepth: yes
           config_timezone: Europe/Berlin
-          output_action: write            # Änderung: write statt none
+          output_action: none
+      # Kopiere die Datei aus dem Docker-Volume in das Arbeitsverzeichnis
+      - name: Copy generated SVG
+        run: |
+          if [ -f /metrics_renders/general.svg ]; then
+            cp /metrics_renders/general.svg .
+          else
+            echo "❌ File not found"
+            exit 1
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: general-svg
@@ -37,7 +46,15 @@ jobs:
           plugin_achievements_secrets: yes
           plugin_achievements_display: detailed
           plugin_achievements_limit: 6
-          output_action: write
+          output_action: none
+      - name: Copy generated SVG
+        run: |
+          if [ -f /metrics_renders/achievements.svg ]; then
+            cp /metrics_renders/achievements.svg .
+          else
+            echo "❌ File not found"
+            exit 1
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: achievements-svg
@@ -53,7 +70,15 @@ jobs:
           base: ""
           plugin_followup: yes
           plugin_followup_indepth: yes
-          output_action: write
+          output_action: none
+      - name: Copy generated SVG
+        run: |
+          if [ -f /metrics_renders/issues.svg ]; then
+            cp /metrics_renders/issues.svg .
+          else
+            echo "❌ File not found"
+            exit 1
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: issues-svg
@@ -71,7 +96,15 @@ jobs:
           plugin_licenses_setup: bash -c '[[ -f package.json ]] && npm ci || true'
           plugin_licenses_legal: yes
           plugin_licenses_ratio: yes
-          output_action: write
+          output_action: none
+      - name: Copy generated SVG
+        run: |
+          if [ -f /metrics_renders/licenses.svg ]; then
+            cp /metrics_renders/licenses.svg .
+          else
+            echo "❌ File not found"
+            exit 1
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: licenses-svg
@@ -89,7 +122,15 @@ jobs:
           plugin_pagespeed_detailed: yes
           plugin_pagespeed_screenshot: no
           plugin_pagespeed_url: https://maurice-fladung.de
-          output_action: write
+          output_action: none
+      - name: Copy generated SVG
+        run: |
+          if [ -f /metrics_renders/pagespeed.svg ]; then
+            cp /metrics_renders/pagespeed.svg .
+          else
+            echo "❌ File not found"
+            exit 1
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: pagespeed-svg
@@ -108,7 +149,15 @@ jobs:
           plugin_stargazers_charts_type: classic
           plugin_stargazers_worldmap: yes
           plugin_stargazers_worldmap_sample: 500
-          output_action: write
+          output_action: none
+      - name: Copy generated SVG
+        run: |
+          if [ -f /metrics_renders/stargazer.svg ]; then
+            cp /metrics_renders/stargazer.svg .
+          else
+            echo "❌ File not found"
+            exit 1
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: stargazer-svg
@@ -126,7 +175,15 @@ jobs:
           plugin_people_limit: 24
           plugin_people_size: 32
           plugin_people_types: followers, following
-          output_action: write
+          output_action: none
+      - name: Copy generated SVG
+        run: |
+          if [ -f /metrics_renders/people.svg ]; then
+            cp /metrics_renders/people.svg .
+          else
+            echo "❌ File not found"
+            exit 1
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: people-svg
