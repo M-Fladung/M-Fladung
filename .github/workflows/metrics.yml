@@ -18,7 +18,7 @@ jobs:
           base: "header, activity, repositories"
           base_indepth: yes
           config_timezone: Europe/Berlin
-          output_action: none               # <-- Muss gesetzt sein!
+          output_action: none               
       - uses: actions/upload-artifact@v4
         with:
           name: general-svg
@@ -88,7 +88,7 @@ jobs:
           plugin_pagespeed: yes
           plugin_pagespeed_detailed: yes
           plugin_pagespeed_screenshot: no
-          plugin_pagespeed_url: .user.website
+          plugin_pagespeed_url: maurice-fladung.de
           output_action: none
       - uses: actions/upload-artifact@v4
         with:
