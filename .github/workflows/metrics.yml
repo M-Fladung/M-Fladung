@@ -88,7 +88,8 @@ jobs:
           plugin_pagespeed: yes
           plugin_pagespeed_detailed: yes
           plugin_pagespeed_screenshot: no
-          plugin_pagespeed_url: maurice-fladung.de
+          plugin_pagespeed_token: 
+          plugin_pagespeed_url: https://maurice-fladung.de
           output_action: none
       - uses: actions/upload-artifact@v4
         with:
