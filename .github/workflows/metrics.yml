@@ -8,6 +8,7 @@ on:
     branches: [main]
 
 jobs:
+  general:
     runs-on: ubuntu-latest
     steps:
       - uses: lowlighter/metrics@latest
@@ -17,7 +18,7 @@ jobs:
           base: "header, activity"
           base_indepth: yes
           config_timezone: Europe/Berlin
-          output_action: none               
+          output_action: none
       - uses: actions/upload-artifact@v4
         with:
           name: general-svg
@@ -87,7 +88,6 @@ jobs:
           plugin_pagespeed: yes
           plugin_pagespeed_detailed: yes
           plugin_pagespeed_screenshot: no
-          plugin_pagespeed_token: 
           plugin_pagespeed_url: https://maurice-fladung.de
           output_action: none
       - uses: actions/upload-artifact@v4
